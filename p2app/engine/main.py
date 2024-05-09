@@ -34,8 +34,9 @@ class Engine:
                 self.establish_connection = sqlite3.connect(event.path())
                 self.establish_connection.execute('PRAGMA foreign_keys = ON;')
                 self.establish_connection.commit()
-                print('hi')
                 yield p2app.events.DatabaseOpenedEvent(event.path())
             else:
                 yield p2app.events.DatabaseOpenFailedEvent()
+        elif type_event is p2app.events.CloseDatabaseEvent:
+            yield p2app.events.DatabaseClosedEvent()
         yield from ()
