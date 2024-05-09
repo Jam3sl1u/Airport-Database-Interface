@@ -93,5 +93,4 @@ class MainView(tkinter.Tk, EventHandler):
             visible_name = path.name
         else:
             visible_name = _MISSING_DATABASE_NAME
-
         self.title(f'{_PROJECT_NAME} - {visible_name}')

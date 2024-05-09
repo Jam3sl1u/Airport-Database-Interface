@@ -8,9 +8,7 @@
 # This is the outermost layer of the part of the program that you'll need to build,
 # which means that YOU WILL DEFINITELY NEED TO MAKE CHANGES TO THIS FILE.
 import sqlite3
-
 import p2app.events
-
 
 class Engine:
     """An object that represents the application's engine, whose main role is to
@@ -31,10 +29,13 @@ class Engine:
         # Application-Level Events
         if type_event is p2app.events.QuitInitiatedEvent:
             yield p2app.events.EndApplicationEvent()
-
-
-
-
-
-
+        elif type_event is p2app.events.OpenDatabaseEvent:
+            if event.path().suffix == '.db' and event.path().exists():
+                self.establish_connection = sqlite3.connect(event.path())
+                self.establish_connection.execute('PRAGMA foreign_keys = ON;')
+                self.establish_connection.commit()
+                print('hi')
+                yield p2app.events.DatabaseOpenedEvent(event.path())
+            else:
+                yield p2app.events.DatabaseOpenFailedEvent()
         yield from ()
