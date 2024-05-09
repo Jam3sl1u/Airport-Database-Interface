@@ -9,6 +9,7 @@
 # which means that YOU WILL DEFINITELY NEED TO MAKE CHANGES TO THIS FILE.
 import sqlite3
 import p2app.events
+from p2app.engine.function_imports import *
 
 class Engine:
     """An object that represents the application's engine, whose main role is to
@@ -39,4 +40,9 @@ class Engine:
                 yield p2app.events.DatabaseOpenFailedEvent()
         elif type_event is p2app.events.CloseDatabaseEvent:
             yield p2app.events.DatabaseClosedEvent()
+        # Continent-Related Events
+        elif type_event is p2app.events.StartContinentSearchEvent:
+            search = ContinentEvents(event, self.establish_connection)
+            for continent in search.search_for_continents():
+                yield p2app.events.ContinentSearchResultEvent(continent)
         yield from ()
