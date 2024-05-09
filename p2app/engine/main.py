@@ -7,7 +7,9 @@
 #
 # This is the outermost layer of the part of the program that you'll need to build,
 # which means that YOU WILL DEFINITELY NEED TO MAKE CHANGES TO THIS FILE.
+import sqlite3
 
+import p2app.events
 
 
 class Engine:
@@ -19,14 +21,20 @@ class Engine:
 
     def __init__(self):
         """Initializes the engine"""
-        pass
+        self.establish_connection = None
 
 
     def process_event(self, event):
         """A generator function that processes one event sent from the user interface,
         yielding zero or more events in response."""
+        type_event = type(event)
+        # Application-Level Events
+        if type_event is p2app.events.QuitInitiatedEvent:
+            yield p2app.events.EndApplicationEvent()
 
-        # This is a way to write a generator function that always yields zero values.
-        # You'll want to remove this and replace it with your own code, once you start
-        # writing your engine, but this at least allows the program to run.
+
+
+
+
+
         yield from ()
