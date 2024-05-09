@@ -45,4 +45,7 @@ class Engine:
             search = ContinentEvents(event, self.establish_connection)
             for continent in search.search_for_continents():
                 yield p2app.events.ContinentSearchResultEvent(continent)
+        elif type_event is p2app.events.LoadContinentEvent:
+            load = ContinentEvents(event, self.establish_connection)
+            yield p2app.events.ContinentLoadedEvent(load.load_continent())
         yield from ()
