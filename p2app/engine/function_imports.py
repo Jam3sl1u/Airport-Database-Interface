@@ -83,3 +83,14 @@ class CountryEvents:
             return True, p2app.events.Country(max_id[0] + 1, country[1], country[2], country[3], country[4], country[5])
         except Exception as reason:
             return False, reason
+
+    def save_edited_country(self):
+        """saves changes to country contents and returns the contents to process function"""
+        country = self.event.country()
+        save = self.connection
+        try:
+            save.execute("UPDATE country SET country_code = ?, name = ?, continent_id = ?, wikipedia_link = ?, keywords = ? WHERE country_id = ?", [country[1], country[2], country[3], country[4], country[5], country[0]])
+            save.commit()
+            return True, country
+        except Exception as reason:
+            return False, reason

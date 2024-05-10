@@ -76,5 +76,12 @@ class Engine:
             if result is True:
                 yield p2app.events.CountrySavedEvent(contents)
             else:
-                yield p2app.events.SaveContinentFailedEvent(contents)
+                yield p2app.events.SaveCountryFailedEvent(contents)
+        elif type_event is p2app.events.SaveCountryEvent:
+            save = CountryEvents(event, self.establish_connection)
+            result, contents = save.save_edited_country()
+            if result is True:
+                yield p2app.events.CountrySavedEvent(contents)
+            else:
+                yield p2app.events.SaveCountryFailedEvent(contents)
         yield from ()
