@@ -20,9 +20,12 @@ class ContinentEvents:
     def load_continent(self):
         """loads in the contents of the selected continent with a Continent tuple"""
         load = self.connection.cursor()
-        load.execute("SELECT * FROM continent WHERE continent_id = ?", [self.event.continent_id()])
-        load_item = load.fetchone()
-        return p2app.events.Continent(load_item[0], load_item[1], load_item[2])
+        try:
+            load.execute("SELECT * FROM continent WHERE continent_id = ?", [self.event.continent_id()])
+            load_item = load.fetchone()
+            return True, p2app.events.Continent(load_item[0], load_item[1], load_item[2])
+        except Exception as reason:
+            return False, reason
 
     def save_new_continent(self):
         """saves new continent into the continent table for the selected database"""
@@ -65,9 +68,12 @@ class CountryEvents:
     def load_country(self):
         """loads in the contents of the selected country with a Country tuple"""
         load = self.connection.cursor()
-        load.execute("SELECT * FROM country WHERE country_id = ?", [self.event.country_id()])
-        load_item = load.fetchone()
-        return p2app.events.Country(load_item[0], load_item[1], load_item[2], load_item[3], load_item[4], load_item[5])
+        try:
+            load.execute("SELECT * FROM country WHERE country_id = ?", [self.event.country_id()])
+            load_item = load.fetchone()
+            return True, p2app.events.Country(load_item[0], load_item[1], load_item[2], load_item[3], load_item[4], load_item[5])
+        except Exception as reason:
+            return False, reason
 
     def save_new_country(self):
         """saves new country into the country table for the selected database"""
@@ -110,9 +116,12 @@ class RegionEvents:
     def load_region(self):
         """loads in the contents of the selected region with a Region tuple"""
         load = self.connection.cursor()
-        load.execute("SELECT * FROM region WHERE region_id = ?", [self.event.region_id()])
-        load_item = load.fetchone()
-        return p2app.events.Region(load_item[0], load_item[1], load_item[2], load_item[3], load_item[4], load_item[5], load_item[6], load_item[7])
+        try:
+            load.execute("SELECT * FROM region WHERE region_id = ?", [self.event.region_id()])
+            load_item = load.fetchone()
+            return True, p2app.events.Region(load_item[0], load_item[1], load_item[2], load_item[3], load_item[4], load_item[5], load_item[6], load_item[7])
+        except Exception as reason:
+            return False, reason
 
     def save_new_region(self):
         """saves new region into the region table for the selected database"""
@@ -126,5 +135,16 @@ class RegionEvents:
             access.execute("INSERT INTO region VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [max_id[0] + 1, region[1], region[2], region[3], region[4], region[5], region[6], region[7]])
             save.commit()
             return True, p2app.events.Region(max_id[0] + 1, region[1], region[2], region[3], region[4], region[5], region[6], region[7])
+        except Exception as reason:
+            return False, reason
+
+    def save_edited_region(self):
+        """saves changes to region contents and returns the contents to process function"""
+        region = self.event.region()
+        save = self.connection
+        try:
+            save.execute("UPDATE region SET region_code = ?, local_code = ?, name = ?, continent_id = ?, country_id = ?, wikipedia_link = ?, keywords = ? WHERE region_id = ?", [region[1], region[2], region[3], region[4], region[5], region[6], region[7], region[0]])
+            save.commit()
+            return True, region
         except Exception as reason:
             return False, reason

@@ -9,7 +9,7 @@
 # which means that YOU WILL DEFINITELY NEED TO MAKE CHANGES TO THIS FILE.
 
 import p2app.events
-from p2app.engine.function_imports import *
+from p2app.engine.event_classes import *
 
 class Engine:
     """An object that represents the application's engine, whose main role is to
@@ -46,8 +46,11 @@ class Engine:
             for continent in search.search_for_continents():
                 yield p2app.events.ContinentSearchResultEvent(continent)
         elif type_event is p2app.events.LoadContinentEvent:
-            load = ContinentEvents(event, self.establish_connection)
-            yield p2app.events.ContinentLoadedEvent(load.load_continent())
+            result, load = ContinentEvents(event, self.establish_connection)
+            if result is True:
+                yield p2app.events.ContinentLoadedEvent(load.load_continent())
+            else:
+                yield p2app.events.ErrorEvent(load)
         elif type_event is p2app.events.SaveNewContinentEvent:
             save = ContinentEvents(event, self.establish_connection)
             result, contents = save.save_new_continent()
@@ -68,8 +71,11 @@ class Engine:
             for country in search.search_for_countries():
                 yield p2app.events.CountrySearchResultEvent(country)
         elif type_event is p2app.events.LoadCountryEvent:
-            load = CountryEvents(event, self.establish_connection)
-            yield p2app.events.CountryLoadedEvent(load.load_country())
+            result, load = CountryEvents(event, self.establish_connection)
+            if result is True:
+                yield p2app.events.CountryLoadedEvent(load.load_country())
+            else:
+                yield p2app.events.ErrorEvent(load)
         elif type_event is p2app.events.SaveNewCountryEvent:
             save = CountryEvents(event, self.establish_connection)
             result, contents = save.save_new_country()
@@ -90,11 +96,21 @@ class Engine:
             for region in search.search_for_regions():
                 yield p2app.events.RegionSearchResultEvent(region)
         elif type_event is p2app.events.LoadRegionEvent:
-            load = RegionEvents(event, self.establish_connection)
-            yield p2app.events.RegionLoadedEvent(load.load_region())
+            result, load = RegionEvents(event, self.establish_connection)
+            if result is True:
+                yield p2app.events.RegionLoadedEvent(load.load_region())
+            else:
+                yield p2app.events.ErrorEvent(load)
         elif type_event is p2app.events.SaveNewRegionEvent:
             save = RegionEvents(event, self.establish_connection)
             result, contents = save.save_new_region()
+            if result is True:
+                yield p2app.events.RegionSavedEvent(contents)
+            else:
+                yield p2app.events.SaveRegionFailedEvent(contents)
+        elif type_event is p2app.events.SaveRegionEvent:
+            save = RegionEvents(event, self.establish_connection)
+            result, contents = save.save_edited_region()
             if result is True:
                 yield p2app.events.RegionSavedEvent(contents)
             else:
