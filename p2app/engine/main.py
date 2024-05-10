@@ -84,4 +84,9 @@ class Engine:
                 yield p2app.events.CountrySavedEvent(contents)
             else:
                 yield p2app.events.SaveCountryFailedEvent(contents)
+        # Region-Related Events
+        elif type_event is p2app.events.StartRegionSearchEvent:
+            search = RegionEvents(event, self.establish_connection)
+            for region in search.search_for_regions():
+                yield p2app.events.RegionSearchResultEvent(region)
         yield from ()
