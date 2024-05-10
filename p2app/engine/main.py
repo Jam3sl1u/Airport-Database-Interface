@@ -11,17 +11,16 @@
 import p2app.events
 from p2app.engine.event_classes import *
 
+
 class Engine:
     """An object that represents the application's engine, whose main role is to
     process events sent to it by the user interface, then generate events that are
     sent back to the user interface in response, allowing the user interface to be
     unaware of any details of how the engine is implemented.
     """
-
     def __init__(self):
         """Initializes the engine"""
         self.establish_connection = None
-
 
     def process_event(self, event):
         """A generator function that processes one event sent from the user interface,
@@ -37,7 +36,7 @@ class Engine:
                 self.establish_connection.commit()
                 yield p2app.events.DatabaseOpenedEvent(event.path())
             else:
-                yield p2app.events.DatabaseOpenFailedEvent()
+                yield p2app.events.DatabaseOpenFailedEvent('Sorry! Unfortunately, the database you are trying to access either is not a database or cannot be accessed. Please try connecting to another database :)')
         elif type_event is p2app.events.CloseDatabaseEvent:
             yield p2app.events.DatabaseClosedEvent()
         # Continent-Related Events
@@ -46,11 +45,12 @@ class Engine:
             for continent in search.search_for_continents():
                 yield p2app.events.ContinentSearchResultEvent(continent)
         elif type_event is p2app.events.LoadContinentEvent:
-            result, load = ContinentEvents(event, self.establish_connection)
+            load = ContinentEvents(event, self.establish_connection)
+            result, loaded = load.load_continent()
             if result is True:
-                yield p2app.events.ContinentLoadedEvent(load.load_continent())
+                yield p2app.events.ContinentLoadedEvent(loaded)
             else:
-                yield p2app.events.ErrorEvent(load)
+                yield p2app.events.ErrorEvent(loaded)
         elif type_event is p2app.events.SaveNewContinentEvent:
             save = ContinentEvents(event, self.establish_connection)
             result, contents = save.save_new_continent()
@@ -71,11 +71,12 @@ class Engine:
             for country in search.search_for_countries():
                 yield p2app.events.CountrySearchResultEvent(country)
         elif type_event is p2app.events.LoadCountryEvent:
-            result, load = CountryEvents(event, self.establish_connection)
+            load = CountryEvents(event, self.establish_connection)
+            result, loaded = load.load_country()
             if result is True:
-                yield p2app.events.CountryLoadedEvent(load.load_country())
+                yield p2app.events.CountryLoadedEvent(loaded)
             else:
-                yield p2app.events.ErrorEvent(load)
+                yield p2app.events.ErrorEvent(loaded)
         elif type_event is p2app.events.SaveNewCountryEvent:
             save = CountryEvents(event, self.establish_connection)
             result, contents = save.save_new_country()
@@ -96,11 +97,12 @@ class Engine:
             for region in search.search_for_regions():
                 yield p2app.events.RegionSearchResultEvent(region)
         elif type_event is p2app.events.LoadRegionEvent:
-            result, load = RegionEvents(event, self.establish_connection)
+            load = RegionEvents(event, self.establish_connection)
+            result, loaded = load.load_region()
             if result is True:
-                yield p2app.events.RegionLoadedEvent(load.load_region())
+                yield p2app.events.RegionLoadedEvent(loaded)
             else:
-                yield p2app.events.ErrorEvent(load)
+                yield p2app.events.ErrorEvent(loaded)
         elif type_event is p2app.events.SaveNewRegionEvent:
             save = RegionEvents(event, self.establish_connection)
             result, contents = save.save_new_region()
@@ -115,4 +117,3 @@ class Engine:
                 yield p2app.events.RegionSavedEvent(contents)
             else:
                 yield p2app.events.SaveRegionFailedEvent(contents)
-        yield from ()
