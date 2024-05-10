@@ -89,4 +89,7 @@ class Engine:
             search = RegionEvents(event, self.establish_connection)
             for region in search.search_for_regions():
                 yield p2app.events.RegionSearchResultEvent(region)
+        elif type_event is p2app.events.LoadRegionEvent:
+            load = RegionEvents(event, self.establish_connection)
+            yield p2app.events.RegionLoadedEvent(load.load_region())
         yield from ()

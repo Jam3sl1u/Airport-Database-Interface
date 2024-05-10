@@ -107,4 +107,10 @@ class RegionEvents:
         search_list = search.fetchall()
         return [p2app.events.Region(items[0], items[1], items[2], items[3], items[4], items[5], items[6], items[7]) for items in search_list]
 
+    def load_region(self):
+        """loads in the contents of the selected region with a Region tuple"""
+        load = self.connection.cursor()
+        load.execute("SELECT * FROM region WHERE region_id = ?", [self.event.region_id()])
+        load_item = load.fetchone()
+        return p2app.events.Region(load_item[0], load_item[1], load_item[2], load_item[3], load_item[4], load_item[5], load_item[6], load_item[7])
 
