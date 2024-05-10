@@ -55,4 +55,11 @@ class Engine:
                 yield p2app.events.ContinentSavedEvent(contents)
             else:
                 yield p2app.events.SaveContinentFailedEvent(contents)
+        elif type_event is p2app.events.SaveContinentEvent:
+            save = ContinentEvents(event, self.establish_connection)
+            result, contents = save.save_edited_continent()
+            if result is True:
+                yield p2app.events.ContinentSavedEvent(contents)
+            else:
+                yield p2app.events.SaveContinentFailedEvent(contents)
         yield from ()

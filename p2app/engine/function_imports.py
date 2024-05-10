@@ -38,3 +38,14 @@ class ContinentEvents:
             return True, p2app.events.Continent(max_id[0] + 1, continent[1], continent[2])
         except Exception as reason:
             return False, reason
+
+    def save_edited_continent(self):
+        """saves changes to continent contents and returns the contents to process function"""
+        continent = self.event.continent()
+        save = self.connection
+        try:
+            save.execute("UPDATE continent SET continent_code = ?, name = ? WHERE continent_id = ?", (continent[1], continent[2], continent[0],))
+            save.commit()
+            return True, continent
+        except Exception as reason:
+            return False, reason
