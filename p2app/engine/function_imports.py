@@ -49,3 +49,15 @@ class ContinentEvents:
             return True, continent
         except Exception as reason:
             return False, reason
+
+class CountryEvents:
+    def __init__(self,event, connection):
+        self.event = event
+        self.connection = connection
+
+    def search_for_countries(self):
+        """function finds countries that match the parameters given"""
+        search = self.connection.cursor()
+        search.execute("SELECT * FROM country WHERE name = ? OR country_code = ? OR keywords = ?", [self.event.name(), self.event.country_code(), self.event.name()])
+        search_list = search.fetchall()
+        return [p2app.events.Country(items[0], items[1], items[2], items[3], items[4], items[5]) for items in search_list]
