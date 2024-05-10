@@ -114,3 +114,17 @@ class RegionEvents:
         load_item = load.fetchone()
         return p2app.events.Region(load_item[0], load_item[1], load_item[2], load_item[3], load_item[4], load_item[5], load_item[6], load_item[7])
 
+    def save_new_region(self):
+        """saves new region into the region table for the selected database"""
+        region = self.event.region()
+        save = self.connection
+        access = self.connection.cursor()
+        access.execute("SELECT region_id FROM region")
+        ids = access.fetchall()
+        max_id = max(ids)
+        try:
+            access.execute("INSERT INTO region VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [max_id[0] + 1, region[1], region[2], region[3], region[4], region[5], region[6], region[7]])
+            save.commit()
+            return True, p2app.events.Region(max_id[0] + 1, region[1], region[2], region[3], region[4], region[5], region[6], region[7])
+        except Exception as reason:
+            return False, reason

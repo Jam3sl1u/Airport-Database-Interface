@@ -7,7 +7,7 @@
 #
 # This is the outermost layer of the part of the program that you'll need to build,
 # which means that YOU WILL DEFINITELY NEED TO MAKE CHANGES TO THIS FILE.
-import sqlite3
+
 import p2app.events
 from p2app.engine.function_imports import *
 
@@ -92,4 +92,11 @@ class Engine:
         elif type_event is p2app.events.LoadRegionEvent:
             load = RegionEvents(event, self.establish_connection)
             yield p2app.events.RegionLoadedEvent(load.load_region())
+        elif type_event is p2app.events.SaveNewRegionEvent:
+            save = RegionEvents(event, self.establish_connection)
+            result, contents = save.save_new_region()
+            if result is True:
+                yield p2app.events.RegionSavedEvent(contents)
+            else:
+                yield p2app.events.SaveRegionFailedEvent(contents)
         yield from ()
