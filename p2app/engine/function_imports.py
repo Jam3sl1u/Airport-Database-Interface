@@ -23,3 +23,18 @@ class ContinentEvents:
         load.execute("SELECT * FROM continent WHERE continent_id = ?", (self.event.continent_id(),))
         load_item = load.fetchone()
         return p2app.events.Continent(load_item[0], load_item[1], load_item[2])
+
+    def save_new_continent(self):
+        """saves new continent into the continent table for the selected database"""
+        continent = self.event.continent()
+        save = self.connection
+        access = self.connection.cursor()
+        access.execute("SELECT continent_id FROM continent")
+        ids = access.fetchall()
+        max_id = max(ids)
+        try:
+            access.execute("INSERT INTO continent VALUES(?, ?, ?)", [max_id[0], continent[1], continent[2]])
+            save.commit()
+            return True, p2app.events.Continent(max_id[0] + 1, continent[1], continent[2])
+        except Exception as reason:
+            return False, reason
