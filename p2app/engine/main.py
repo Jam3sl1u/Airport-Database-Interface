@@ -70,4 +70,11 @@ class Engine:
         elif type_event is p2app.events.LoadCountryEvent:
             load = CountryEvents(event, self.establish_connection)
             yield p2app.events.CountryLoadedEvent(load.load_country())
+        elif type_event is p2app.events.SaveNewCountryEvent:
+            save = CountryEvents(event, self.establish_connection)
+            result, contents = save.save_new_country()
+            if result is True:
+                yield p2app.events.CountrySavedEvent(contents)
+            else:
+                yield p2app.events.SaveContinentFailedEvent(contents)
         yield from ()

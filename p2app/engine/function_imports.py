@@ -33,7 +33,7 @@ class ContinentEvents:
         ids = access.fetchall()
         max_id = max(ids)
         try:
-            access.execute("INSERT INTO continent VALUES(?, ?, ?)", [max_id[0], continent[1], continent[2]])
+            access.execute("INSERT INTO continent VALUES(?, ?, ?)", [max_id[0] + 1, continent[1], continent[2]])
             save.commit()
             return True, p2app.events.Continent(max_id[0] + 1, continent[1], continent[2])
         except Exception as reason:
@@ -68,3 +68,18 @@ class CountryEvents:
         load.execute("SELECT * FROM country WHERE country_id = ?", [self.event.country_id()])
         load_item = load.fetchone()
         return p2app.events.Country(load_item[0], load_item[1], load_item[2], load_item[3], load_item[4], load_item[5])
+
+    def save_new_country(self):
+        """saves new country into the country table for the selected database"""
+        country = self.event.country()
+        save = self.connection
+        access = self.connection.cursor()
+        access.execute("SELECT country_id FROM country")
+        ids = access.fetchall()
+        max_id = max(ids)
+        try:
+            access.execute("INSERT INTO country VALUES(?, ?, ?, ?, ?, ?)", [max_id[0] + 1, country[1], country[2], country[3], country[4], country[5]])
+            save.commit()
+            return True, p2app.events.Country(max_id[0] + 1, country[1], country[2], country[3], country[4], country[5])
+        except Exception as reason:
+            return False, reason
