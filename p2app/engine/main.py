@@ -67,4 +67,7 @@ class Engine:
             search = CountryEvents(event, self.establish_connection)
             for country in search.search_for_countries():
                 yield p2app.events.CountrySearchResultEvent(country)
+        elif type_event is p2app.events.LoadCountryEvent:
+            load = CountryEvents(event, self.establish_connection)
+            yield p2app.events.CountryLoadedEvent(load.load_country())
         yield from ()
