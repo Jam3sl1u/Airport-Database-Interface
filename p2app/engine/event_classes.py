@@ -1,7 +1,8 @@
-# p2app/engine/event_functions.py
+# p2app/engine/event_classes.py
 #
 # module for event functionality split into a separate module for readability and functionality
 
+import sqlite3
 import p2app.events
 
 error_message = 'Sorry! Unfortunately, you have entered a invalid or pre-existing value in the database. Or something unexpected has occurred. Please try again :)'
@@ -63,7 +64,7 @@ class ContinentEvents:
 
 class CountryEvents:
     """
-    Class for Country-Related Events for searching, loading, adding, and editing Continents.
+    Class for Country-Related Events for searching, loading, adding, and editing Countries.
     Is referenced to in the engine/main module and returns values back.
     """
     def __init__(self,event, connection):
@@ -117,7 +118,7 @@ class CountryEvents:
 
 class RegionEvents:
     """
-    Class for Region-Related Events for searching, loading, adding, and editing Continents.
+    Class for Region-Related Events for searching, loading, adding, and editing Regions.
     Is referenced to in the engine/main module and returns values back.
     """
     def __init__(self, event, connection):
